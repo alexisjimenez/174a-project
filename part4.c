@@ -1,10 +1,17 @@
-//#indef STANDARD
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-//#include <my_global.h>
+#ifdef _WIN_
+typedef unsigned __int64 ulonglong;     /* Microsofts 64 bit types */
+typedef __int64 longlong;
+#else
+typedef unsigned long long ulonglong;
+typedef long long longlong;
+#endif /*__WIN__*/
 #include <mysql.h>
+//static pthread_mutex_t LOCK_hostname;
 
+#ifdef __cplusplus
 //The initializer of the function
 extern "C" my_bool MyTest_init(UDF_INIT *initid, UDF_ARGS *args,char *message)
 {
@@ -40,7 +47,7 @@ extern "C" void MyTest_deinit(UDF_INIT *initid)
 {
   delete (longlong*)initid->ptr;
 }
-
+#endif
 
 //resets the sum to 0 for each new group
 void MyTest_clear(UDF_INIT *initid, char *is_null, char *error)
