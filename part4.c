@@ -3,11 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 //#include <my_global.h>
-#include <my_sys.h>
 #include <mysql.h>
-#include <ctype.h>
-static pthread_mutex_t LOCK_hostname;
-
 
 //The initializer of the function
 extern "C" my_bool MyTest_init(UDF_INIT *initid, UDF_ARGS *args,char *message)
@@ -55,6 +51,7 @@ void MyTest_clear(UDF_INIT *initid, char *is_null, char *error)
 //For each row, the current value is added to the sum, which is in the initid->ptr
 void MyTest_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
+  //here call the homoadd function from paillier
   *((longlong*)initid->ptr) =  *((longlong*)initid->ptr) +  *((longlong*)args->args[0]);
 }
 
