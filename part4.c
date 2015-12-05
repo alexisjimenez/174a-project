@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <mysql.h>
-#include "paillier.h"
+#include "PLib/paillier.h"
 
 //The initializer of the function
 my_bool SumHE_init(UDF_INIT *initid, UDF_ARGS *args,char *message)
@@ -39,7 +39,6 @@ void SumHE_deinit(UDF_INIT *initid)
 {
   free(initid);  
 }
-#endif
 
 //resets the sum to 0 for each new group
 void MyTest_clear(UDF_INIT *initid, char *is_null, char *error)
