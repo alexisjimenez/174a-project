@@ -1,31 +1,23 @@
 #include <stdlib.h>
+#include <gmp.h>
 #include <stdio.h>
 #include <string.h>
-#ifdef _WIN_
-typedef unsigned __int64 ulonglong;     /* Microsofts 64 bit types */
-typedef __int64 longlong;
-#else
-typedef unsigned long long ulonglong;
-typedef long long longlong;
-#endif /*__WIN__*/
 #include <mysql.h>
-//static pthread_mutex_t LOCK_hostname;
+#include "paillier.h"
 
-#ifdef __cplusplus
 //The initializer of the function
-extern "C" my_bool MyTest_init(UDF_INIT *initid, UDF_ARGS *args,char *message)
+ my_bool MyTest_init(UDF_INIT *initid, UDF_ARGS *args,char *message)
 {
   // The most important thing to do here is setting up the memory
   // you need...
   // Lets say we need a lonlong type variable to keep a checksum
   // Although we do not need one in this case
 
-  longlong* i = new longlong; // create the variable
-  *i = 0;                     // set it to a value
-        
+  paillier_ciphertext_t* sum = paillier_create_enc_zero();
+
   // store it as a char pointer in the pointer variable
   // Make sure that you don`t run in typecasting troubles later!!
-  initid->ptr = (char*)i;
+  initid->ptr = (char*)sum;
         
   // check the arguments format
   if (args->arg_count != 1)
@@ -43,27 +35,36 @@ extern "C" my_bool MyTest_init(UDF_INIT *initid, UDF_ARGS *args,char *message)
 }
 
 //free the memory that was allocated in the initialization
-extern "C" void MyTest_deinit(UDF_INIT *initid)
+void MyTest_deinit(UDF_INIT *initid)
 {
-  delete (longlong*)initid->ptr;
+  free(initid);  
 }
 #endif
 
 //resets the sum to 0 for each new group
 void MyTest_clear(UDF_INIT *initid, char *is_null, char *error)
 {
-  *((longlong*)initid->ptr) = 0;
+  *((char*)initid->ptr) = 0;
 }
 
 //For each row, the current value is added to the sum, which is in the initid->ptr
-void MyTest_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+void SUM_HE(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
-  //here call the homoadd function from paillier
-  *((longlong*)initid->ptr) =  *((longlong*)initid->ptr) +  *((longlong*)args->args[0]);
+  paillier_pubkey_t* publicKey;
+  publicKey = paillier_pubkey_from_hex("8be7f3e2c14d9bcf633376b12217cd1d") ;  
+
+  paillier_ciphertext_t* sumHe = (paillier_ciphertext_t* )initid->ptr;
+
+  paillier_ciphertext_t* decode0 = paillier_ciphertext_from_bytes( args->args[0], 128/8 );
+
+  paillier_mul(publicKey,sumHe,decode0,sumHE);  
+
 }
 
 //return the sum
-longlong MyTest(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+char* MyTest(UDF_INIT *initid, UDF_ARGS *args,char *result, unsigned long *length, char *is_null, char *error)
 {
-  return *((longlong*)initid->ptr);
+
+  paillier_ciphertext_t* sumHe = (paillier_ciphertext_t* )initid->ptr;
+  return paillier_ciphertext_to_bytes(128/8,sumHe);
 }
