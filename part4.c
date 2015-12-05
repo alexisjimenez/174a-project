@@ -2,8 +2,13 @@
 #include <gmp.h>
 #include <stdio.h>
 #include <string.h>
+<<<<<<< HEAD
 //#include <mysql.h>
 #include "paillier.h"
+=======
+#include <mysql.h>
+#include "PLib/paillier.h"
+>>>>>>> c38e768c2472dc1ace6078c91cdb1795ae63d42f
 
 //The initializer of the function
 my_bool SumHE_init(UDF_INIT *initid, UDF_ARGS *args,char *message)
