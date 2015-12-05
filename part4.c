@@ -2,7 +2,7 @@
 #include <gmp.h>
 #include <stdio.h>
 #include <string.h>
-#include <mysql.h>
+//#include <mysql.h>
 #include "paillier.h"
 
 //The initializer of the function
@@ -39,7 +39,6 @@ void SumHE_deinit(UDF_INIT *initid)
 {
   free(initid);  
 }
-#endif
 
 //resets the sum to 0 for each new group
 void MyTest_clear(UDF_INIT *initid, char *is_null, char *error)
