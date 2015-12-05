@@ -2,22 +2,22 @@
 #include <gmp.h>
 #include <stdio.h>
 #include <string.h>
-#include <mysql.h>
+//#include <mysql.h>
 #include "paillier.h"
 
 //The initializer of the function
- my_bool MyTest_init(UDF_INIT *initid, UDF_ARGS *args,char *message)
+ my_bool SumHE_init(UDF_INIT *initid, UDF_ARGS *args,char *message)
 {
   // The most important thing to do here is setting up the memory
   // you need...
   // Lets say we need a lonlong type variable to keep a checksum
   // Although we do not need one in this case
 
-  paillier_ciphertext_t* sum = paillier_create_enc_zero();
+  paillier_ciphertext_t* sumHE = paillier_create_enc_zero();
 
   // store it as a char pointer in the pointer variable
   // Make sure that you don`t run in typecasting troubles later!!
-  initid->ptr = (char*)sum;
+  initid->ptr = (char*)sumHE;
         
   // check the arguments format
   if (args->arg_count != 1)
@@ -35,7 +35,7 @@
 }
 
 //free the memory that was allocated in the initialization
-void MyTest_deinit(UDF_INIT *initid)
+void SumHE_deinit(UDF_INIT *initid)
 {
   free(initid);  
 }
@@ -53,18 +53,18 @@ void SUM_HE(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
   paillier_pubkey_t* publicKey;
   publicKey = paillier_pubkey_from_hex("8be7f3e2c14d9bcf633376b12217cd1d") ;  
 
-  paillier_ciphertext_t* sumHe = (paillier_ciphertext_t* )initid->ptr;
+  paillier_ciphertext_t* sumHE = (paillier_ciphertext_t* )initid->ptr;
 
   paillier_ciphertext_t* decode0 = paillier_ciphertext_from_bytes( args->args[0], 128/8 );
 
-  paillier_mul(publicKey,sumHe,decode0,sumHE);  
+  paillier_mul(publicKey,sumHE,decode0,sumHE);  
 
 }
 
 //return the sum
-char* MyTest(UDF_INIT *initid, UDF_ARGS *args,char *result, unsigned long *length, char *is_null, char *error)
+char* Return_SumHE(UDF_INIT *initid, UDF_ARGS *args,char *result, unsigned long *length, char *is_null, char *error)
 {
 
-  paillier_ciphertext_t* sumHe = (paillier_ciphertext_t* )initid->ptr;
-  return paillier_ciphertext_to_bytes(128/8,sumHe);
+  paillier_ciphertext_t* sumHE = (paillier_ciphertext_t* )initid->ptr;
+  return paillier_ciphertext_to_bytes(128/8,sumHE);
 }
