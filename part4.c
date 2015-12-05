@@ -2,11 +2,11 @@
 #include <gmp.h>
 #include <stdio.h>
 #include <string.h>
-//#include <mysql.h>
+#include <mysql.h>
 #include "paillier.h"
 
 //The initializer of the function
- my_bool SumHE_init(UDF_INIT *initid, UDF_ARGS *args,char *message)
+my_bool SumHE_init(UDF_INIT *initid, UDF_ARGS *args,char *message)
 {
   // The most important thing to do here is setting up the memory
   // you need...
