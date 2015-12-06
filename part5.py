@@ -3,8 +3,8 @@ from __future__ import division
 import csv
 import sys
 import string 
-import os 
-
+import os
+import subprocess
 
 import mysql.connector
 
@@ -35,20 +35,28 @@ def emp_function(values):
 
   splitInput = values.split()
   length = len(splitInput)
-  print ("Ths is the length of the command splitted: ", length)
-
+  print ("This is the length of the command splitted: ", length)
   print ("This is the command: ", splitInput[0])
   #Insert row into the database 
 
   if (splitInput[0] == 'INSERT' or splitInput[0] == 'insert'):
-    if (length == 4):
-      """TO DO: CHECK IF ALREADY HAVE ID"""
+    if (length == 4 and splitInput[1].isdigit() and splitInput[2].isdigit() and splitInput[3].isdigit()):
       print("Got inside INSERT id age salary")
       """TO DO: PASS ON THE ENCRYPTED SALARY"""
-      #insert_employee = ("INSERT INTO Employees VALUES""(%(id)s, %(age)s, %(salary)s)")
-
+      proc = subprocess.Popen(['./encyrpt', splitInput[3]], stdout = subprocess.PIPE)
+      line = proc.stdout.readline()
+      salaryEncrypt = line.rstrip()
+      insert_employee = ("INSERT INTO Employees VALUES(" + splitInput[1] + "," + splitInput[2] + "," + salaryEncrypt + ")")
       """TO DO: IF ID ALREADY THERE THROW ERROR"""
-   #   execute(insert_employee, values)
+      cursor.execute("SELECT COUNT(*) FROM Employees WHERE id=" + splitInput[1])
+      count = cursor.fetchall()
+      print("This is count: ", count)
+      for row in count:
+        if row[0] != 0: 
+          print ("Duplicate ids!")
+          break
+      else: 
+        cursor.execute(insert_employee, values)
     else: 
       print ("Incorrect number of values")
 
@@ -60,16 +68,28 @@ def emp_function(values):
       if (splitInput[1] == '*'):
         print("Got inside SELECT *")
         """TO DO: PRINT OUT EVERYTHING"""
-        #insert_employee = ("SELECT * FROM Employees")
-        #result = cursor.execute(insert_employee, values)
-        #print ("This is the SELECT * FROM Employees: ", result)
-      elif (splitInput[1].isdigit() == true):
+        insert_employee = ("SELECT * FROM Employees")
+        cursor.execute(insert_employee, values)
+        cursor.execute("SELECT COUNT(*) FROM Employees WHERE id=" + splitInput[1])
+        count = cursor.fetchall()
+        print("This is count: ", count)
+        for row in count:
+          if row[0] != 0: 
+            print ("Found ID!")
+            print ("This is the SELECT id FROM Employees: ",row[0],row[1],row[2]) 
+          else: 
+            print("ID not here")
+      elif (splitInput[1].isdigit() == True):
         print("Got inside SELECT DIGIT")
         """TO DO: CHECK IF ID IN DATABASE"""
-        #select_employee = ("SELECT ? FROM Employees", splitInput[2])
-        #cursor.execute(select_employee, values)
-        #for row in cursor: 
-          ##print ("This is the SELECT id FROM Employees: ",row) 
+        select_employee = ("SELECT * FROM Employees WHERE id=" + splitInput[1])
+        cursor.execute(select_employee, values)
+        try:
+          data = cursor.fetchall()  # fetch (and discard) remaining rows
+          for row in data: 
+            print ("This is the SELECT id FROM Employees: ",row[0],row[1],row[2])
+        except:
+          print("ID does not exist")
 
     elif (length == 3): 
       print("This is the second command, should be AVG: ", splitInput[1])
@@ -232,7 +252,5 @@ if __name__ == '__main__':
     input_var = raw_input("Please enter your command: ")
   cursor.close()
   cnx.close()
-
-
 
 
