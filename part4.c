@@ -42,7 +42,7 @@ my_bool SumHE_init(UDF_INIT *initid, UDF_ARGS *args,char *message)
 //free the memory that was allocated in the initialization
 void SumHE_deinit(UDF_INIT *initid)
 {
-  free(initid);  
+  free(initid->ptr);  
 }
 
 //resets the sum to 0 for each new group
@@ -52,7 +52,7 @@ void MyTest_clear(UDF_INIT *initid, char *is_null, char *error)
 }
 
 //For each row, the current value is added to the sum, which is in the initid->ptr
-void SUM_HE(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
+void SUM_HE_add(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
 {
   paillier_pubkey_t* publicKey;
   publicKey = paillier_pubkey_from_hex("8be7f3e2c14d9bcf633376b12217cd1d") ;  
@@ -60,6 +60,8 @@ void SUM_HE(UDF_INIT *initid, UDF_ARGS *args, char *is_null, char *error)
   paillier_ciphertext_t* sumHE = (paillier_ciphertext_t* )initid->ptr;
 
   paillier_ciphertext_t* decode0 = paillier_ciphertext_from_bytes( args->args[0], 128/8 );
+spz_set
+
 
   paillier_mul(publicKey,sumHE,decode0,sumHE);  
 
