@@ -1,0 +1,27 @@
+AVData
+
+Compiling Paillier Library:
+	  We went to google and typed in paillier c. Then we clicked on the first link
+	  shown and downloaded the library. We then renamed this library to PLib. This
+	  library was then sent to the Desktop.
+
+Compiling encrypt.c and decrypt.c:
+	  We could not get our encrypt.c and decrypt.c to compile on the desktop of our
+	  mac since gmp was not installed. We tried to install gmp, but it still would 
+	  not work. COMMEEE BACKKK!!!!
+
+Compiling SUM_HE.c:
+	  We compiled our encrypted sum salary function on the our ubuntu AWS  and then 
+	  sent the SUM_HE.so file to our mysql server.To compile the file we entered:
+	  gcc -fPIC -I/usr/include/mysql -shared -o SUM_HE.so SUM_HE.c -lgmp
+	  We then entered mysql remotely from our ubuntu AWS by typing mysql -u root -p 
+	  and then typed in out password. Through mysql, we typed 
+	  CREATE AGGREGATE FUNCTION SUM_HE pressed enter and then typed 
+	  RETURNS STRING SONAME "SUM_HE.so"; and then pressed enter.
+
+Running our client interface:
+	We coded our client interface in python. To run it, we put our .py file on the desktop
+	where the encrypt and decrypt executables are at and the paillier library file file called
+	PLib. from the local terminal, we ran python part5split.py. This will connect to the AWS and
+	also to mysql.
+ 
