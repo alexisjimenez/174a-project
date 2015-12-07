@@ -2,16 +2,19 @@ AVData
 
 Compiling Paillier Library:
 	  We went to google and typed in paillier c. Then we clicked on the first link
-	  shown and downloaded the library. We then renamed this library to PLib. This
-	  library was then sent to the Desktop.
+	  shown and downloaded the library. We then added the paillier.c and paillier.h
+	  file into another AWS named AVData2.
 
 Compiling encrypt.c and decrypt.c:
 	  We could not get our encrypt.c and decrypt.c to compile on the desktop of our
 	  mac since gmp was not installed. We tried to install gmp, but it still would 
-	  not work. COMMEEE BACKKK!!!!
+	  not work. We therefore created another AWS instance called AVData2 and trasferred
+	  in the files encrypt.c and decrypt.c. We then compiled them with:
+	  gcc -o encrypt encrypt.c paillier.c -lgmp
+	  gcc -o decrypt decrypt.c paillier.c -lgmp
 
 Compiling SUM_HE.c:
-	  We compiled our encrypted sum salary function on the our ubuntu AWS  and then 
+	  We compiled our encrypted sum salary function on the our ubuntu AWS called AVData1  and then 
 	  sent the SUM_HE.so file to our mysql server.To compile the file we entered:
 	  gcc -fPIC -I/usr/include/mysql -shared -o SUM_HE.so SUM_HE.c -lgmp
 	  We then entered mysql remotely from our ubuntu AWS by typing mysql -u root -p 
@@ -20,8 +23,10 @@ Compiling SUM_HE.c:
 	  RETURNS STRING SONAME "SUM_HE.so"; and then pressed enter.
 
 Running our client interface:
-	We coded our client interface in python. To run it, we put our .py file on the desktop
-	where the encrypt and decrypt executables are at and the paillier library file file called
-	PLib. from the local terminal, we ran python part5split.py. This will connect to the AWS and
-	also to mysql.
+	We coded our client interface in python. To run it, we put our part5split.py file inside AVData2 AWS instance
+	where the encrypt and decrypt executables are at and the paillier.c and paillier.h. 
+	We than had to install mysql.connector using command:
+	pip install --user --allow-external mysql-connector-python mysql-connector-python
+	We ran python part5split.py. This will connect to the AWS and
+	also to mysql.This enteres the user command prompt.
  
